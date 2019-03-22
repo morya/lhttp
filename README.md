@@ -1,31 +1,35 @@
-#Your star is my power!! :rocket:
-###Discribe
+# Your star is my power!! :rocket: :star: :star: :star: :star: :star:
+
+[![License MIT](https://img.shields.io/npm/l/express.svg)](http://opensource.org/licenses/MIT)
+[![Go Report Card](https://goreportcard.com/badge/github.com/fanux/lhttp)](https://goreportcard.com/report/github.com/fanux/lhttp) [![GoDoc](https://godoc.org/github.com/fanux/lhttp?status.svg)](http://godoc.org/github.com/fanux/lhttp) 
+[![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go/blob/master/README.md#networking) 
+
+### Discribe
 lhttp is a http like protocol using websocket to provide long live, 
-bulid your IM service quickly scalable without XMPP! 
+build your IM service quickly scalable without XMPP! 
 
 Everything is customizable.
 
-###Features
+### [简体中文](https://github.com/fanux/lhttp/blob/master/doc/README_zh.md)
+
+### Features
 *   simple easy but powerful!
-*   fast, 10000 messages send using 0.04s(single-core CPU,1G memory).
+*   fast, publish 10000 messages using 0.04s(single-core CPU,1G memory).
 *   support cluster.
 *   easy to customize and expansion.
-*   work well with HTTP. So LHTTP can work with other language like php java python etc,.
+*   work well with HTTP. So LHTTP can work with others language like PHP java python etc,.
 
 ### A simple [chat room demo](https://github.com/fanux/lhttp-web-demo)
 ![chat-demo](https://github.com/fanux/lhttp-web-demo/blob/master/web-demo.gif)
 with [lhttp javascript sdk](https://github.com/fanux/lhttp-javascript-sdk) we complete a simple chat room within 40 lines code!!
 
-###SDKs 
+### SDKs 
 - [x] [javascript SDK](https://github.com/fanux/lhttp-javascript-sdk) webapp or website.
 - [ ] [c SDK](https://github.com/fanux/lhttp-c-sdk) ARM application or some c/c++ application.
-- [ ] [swift SDK](https://github.com/fanux/lhttp-swift-sdk) ios app
-- [ ] [object-c SDK](https://github.com/fanux/lhttp-object-c-sdk) ios app
-- [ ] [java SDK](https://github.com/fanux/lhttp-java-sdk) andriod app or java application.
 
-###[Header filter development](https://github.com/fanux/lhttp/blob/master/doc/DEVELOP.md)
+### [Header filter development](https://github.com/fanux/lhttp/blob/master/doc/DEVELOP.md)
 
-####Protocol stack:
+#### Protocol stack:
 ```go
 +--------------------+
 |       lhttp        |
@@ -36,7 +40,7 @@ with [lhttp javascript sdk](https://github.com/fanux/lhttp-javascript-sdk) we co
 +--------------------+
 ```
 
-####Architecture
+#### Architecture
 ```go
         +---------------------------------------+
         |    message center cluster (gnatsd)    |
@@ -52,7 +56,7 @@ with [lhttp javascript sdk](https://github.com/fanux/lhttp-javascript-sdk) we co
  +--------+  +--------+   +--------+   +--------+   +--------+  
 ```
 
-####Quick start
+#### Quick start
 ```bash
 go get github.com/nats-io/nats
 go get github.com/fanux/lhttp
@@ -69,7 +73,23 @@ cd bin
 ./lhttpClient
 ```
 
-###Protocol
+### Ship on docker
+```
+$ docker build -t lhttp:latest .
+$ docker run -p 9090:9090 -p 8081:8081 lhttp:latest
+```
+Open two windows in your browser, enter `http://localhost:9090`.
+
+Lhttp server port is 8081, your own websocket client can connect to `ws://localhost:8081`
+
+Enjoy the chat...
+
+Alternative, pull image from docker hub.
+```
+$ docker run -p 9090:9090 -p 8081:8081 fanux/lhttp:latest
+```
+
+### Protocol
 ```go
 LHTTP/1.0 Command\r\n                --------start line, define command, and protocol [protocol/version] [command]\r\n
 Header1:value\r\n                    --------headers
@@ -90,7 +110,7 @@ publish:channel_jack\r\n
     time:1990-1210 5:30:48
 }
 ```
-###Usage
+### Usage
  > define your processor, you need combine ```BaseProcessor```
  
 ```go
@@ -129,7 +149,7 @@ func (p *ChatProcessor)OnMessage(h *WsHandler) {
     h.Send(h.GetBody())
 }
 ```
-###Start websocket server
+### Start websocket server
 ```go
 http.Handler("/echo",lhttp.Handler(lhttp.StartServer))
 http.ListenAndServe(":8081")
@@ -154,13 +174,13 @@ func main(){
 ```
 ***
 
-###Test
+### Test
 open  websocketServer and run:
 ```bash
 cd websocketServer
 go run test.go
 ```
-as we can see, both of the new header are added and new command are set by the server. 
+as we can see, both of the new headers are added and new command is set by the server. 
 If we don't set a header or command ,then they will return the same result as they 
 requested. 
 
@@ -169,7 +189,7 @@ open an other bash, and run client in websocketClient
 cd websocketClient
 go run test.go
 ```
-###Subscribe/Publish
+### Subscribe/Publish
 client1:
 ```go
 LHTTP/1.0 command\r\n
@@ -192,7 +212,7 @@ unsubscribe:channelID\r\n
 body optional
 ```
 client2 publish a message by channelID, client1 subscribe it, so client 1 will receive the message.
-if client1 send unsubscribe channelID, he will not recevie message any more in channelID
+if client1 send unsubscribe channelID, he will not receive message any more in channelID
 
 support multiple channelID:
 ```go
@@ -200,12 +220,12 @@ LHTTP/1.0 chat\r\n
 subscribe:channelID1 channelID2 channelID3\r\n
 \r\n
 ```
-####Using HTTP publish message! 
+#### Using HTTP publish message! 
 lhttp support publish message by standard HTTP. 
-url: /publish . 
+URL: /publish . 
 method: POST . 
-body: use lhttp publish message as HTTP body.
-for example I wan't send a message to who subscribe channel_test by HTTP.
+body: use lhttp publishes message as HTTP body.
+for example I want send a message to who subscribe channel_test by HTTP.
 ```go
     resp,err := http.POST("https://www.yourserver.com/publish", "text/plain",
     "LHTTP/1.0 chat\r\npublish:channel_test\r\n\r\nhello channel_test guys!")
@@ -222,7 +242,7 @@ Publish("mike", "yourCommand", nil, "hello mike!")
 ```
 
 
-###Upstream
+### Upstream
 we can use lhttp as a proxy:
 ```go
 LHTTP/1.0 command\r\n
@@ -240,9 +260,9 @@ upstream:GET http://www.xxx.com?user=user_a&age=26\r\n
 body
 ```
 
-####This case will show you about upstream proxy:
+#### This case will show you about upstream proxy:
 jack use lhttp chat with mike, lhttp is third part module, we can't modify lhttp server but
-we want save the chat record, how can we do?
+we want to save the chat record, how can we do?
 
 ```
         +----+                  +----+
@@ -262,7 +282,7 @@ we want save the chat record, how can we do?
     
 ```
 jack:
-MESSAGE_UPSTREAM:=
+`MESSAGE_UPSTREAM`
 ```go
 LHTTP/1.0 chat\r\n
 upstream:POST http://www.xxx.com/record\r\n
@@ -277,12 +297,12 @@ subscribe:channel_mike\r\n
 \r\n
 ```
 when jack send publish message, not only mike will receive the message, the http server will
-also receive it. witch http body is:```MESSAGE_UPSTREAM```, so http serve can do anything about
+also receive it. witch http body is:```MESSAGE_UPSTREAM```, so http server can do anything about
 message include save the record
 
-###Multipart data
-forexample a file upload message, the multipart header record the offset of each data part, 
-each part can has it own headers
+### Multipart data
+for example a file upload message, the multipart header record the offset of each data part, 
+each part can have it own headers
 ```go
 LHTTP/1.0 upload\r\n
 multipart:0 56\r\n
@@ -303,7 +323,7 @@ content-type:text/json\r\n\r\n{filename:file.txt,fileLen:5}content-type:text/pla
 why not boundary but use offset? if use boundary lhttp need ergodic hole message, that behaviour 
 is poor efficiency. instead we use offset to cut message 
 
-####How to get multipart data
+#### How to get multipart data
 for example this is client message.
 ```go
 LHTTP/1.0 upload\r\nmultipart:0 14\r\n\r\nk1:v1\r\n\r\nbody1k2:v2\r\n\r\nbody2
@@ -320,8 +340,10 @@ func (*UploadProcessor) OnMessage(ws *lhttp.WsHandler) {
 	}
 }
 
-//don't forget to tegist your command processor
+//don't forget to regist your command processor
 
 lhttp.Regist("upload", &UploadProcessor{&lhttp.BaseProcessor{}})
 ```
 
+## Partners
+[![](https://yunbi.com/logos/logo.svg)](https://yunbi.com)

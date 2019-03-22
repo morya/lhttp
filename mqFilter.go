@@ -18,8 +18,12 @@ func (*mqHeadFilter) AfterRequestFilterHandle(ws *WsHandler) {
 	if value = ws.GetHeader(HEADER_KEY_SUBSCRIBE); value != "" {
 		channels = strings.Split(value, " ")
 		for _, c := range channels {
-			mq.Subscribe(c, ws.subscribeCallback)
-			log.Print("subscribe channel: ", c)
+			if conn,err:=mq.Subscribe(c, ws.subscribeCallback); nil == err{
+				ws.subscribe_nats_conn[c] = conn
+			}else{
+				log.Println("Subscribe Error",err)
+			}
+			// log.Print("subscribe channel: ", c)
 		}
 	}
 
@@ -29,15 +33,15 @@ func (*mqHeadFilter) AfterRequestFilterHandle(ws *WsHandler) {
 			ws.setResponse()
 			ws.resp.serializeMessage()
 			mq.Publish(c, ws.resp.message)
-
-			log.Print("publish channel: ", c, "message:", ws.resp.message)
+			// log.Print("publish channel: ", c, "message:", ws.resp.message)
 		}
 	}
 
 	if value = ws.GetHeader(HEADER_KEY_UNSUBSCRIBE); value != "" {
 		channels = strings.Split(value, " ")
 		for _, c := range channels {
-			mq.Unsubscribe(c)
+			mq.Unsubscribe(ws.subscribe_nats_conn[c])
+			log.Print("unsubscribe channel: ", c)
 		}
 	}
 }
